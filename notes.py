@@ -7,9 +7,11 @@ def main():
         action = get_Action()
 
         if action == "Add":
-            add_Notes()
+            add_Note()
         if action == "Read":
             print_Note()
+        if action == "Update":
+            update_Note()
     
         finished = check_Done(finished)
 
@@ -33,7 +35,7 @@ def get_Action():
     return selection
 
 
-def add_Notes():
+def add_Note():
     title = input("What is the title of the note you'd like to add?\n: ")
     message = input("What is the note you'd like to write?\n: ")
 
@@ -93,13 +95,42 @@ def check_Done(finished):
     return finished
 
 
+def update_Note():
+
+    with open("Notes.csv", newline="") as notes_File:
+        reader = csv.DictReader(notes_File, delimiter=",")
+        notes = list(reader)
+    print(notes)
+    titles = []
+    for row in notes:
+        titles.append(row["Title"])
+        
+    selection_phrase = f"Select from the available notes below.\n{titles}\n"
+    valid_title = False
+    while valid_title == False:
+        selection = input(selection_phrase)
+        
+        for title in titles:
+            if selection.lower() == title.lower():
+                valid_title = True
+                selection = title
+                for row in notes:
+                    if row["Title"] == selection:
+                        print(row["Note"])
+                        new_note = input("What would you like the new note to be?\n: ")
+                        row["Note"] = new_note
+
+            if selection not in title:
+                selection_phrase = "Note youve selected doesnt share a name with a Note already in the list, please try again"
+
+    with open("Notes.csv", "w", newline="") as notes_File:
+        writer = csv.DictWriter(notes_File, delimiter=",", fieldnames= ["Title", "Note"])
+        writer.writeheader()
+        for row in notes:
+            writer.writerow(row)
+    
 
 
-
-
-
-
-
-
+    return
 
 main()
