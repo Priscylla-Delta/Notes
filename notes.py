@@ -10,6 +10,8 @@ def main():
             add_Note()
         if action == "Read":
             print_Note()
+        if action == "Delete":
+            delete_Note()
         if action == "Update":
             update_Note()
     
@@ -30,7 +32,7 @@ def get_Action():
                 selection = option
                 print(f"'{selection}' Selected")
             if selection not in options:
-                selection_phrase = "Option You've Selected is either not in the expected list or not up to date, please try again"
+                selection_phrase = "Option You've Selected is either not in the expected list or not up to date, please try again\n: "
 
     return selection
 
@@ -70,9 +72,11 @@ def print_Note():
                     if row["Title"] == selection:
                         print(row["Note"])
 
+            if selection == "Cancel":
+                return
 
             if selection not in title:
-                selection_phrase = "Note youve selected doesnt share a name with a Note already in the list, please try again"
+                selection_phrase = "Note youve selected doesnt share a name with a Note already in the list, please try again or type 'Cancel'\n: "
 
     return
 
@@ -95,12 +99,50 @@ def check_Done(finished):
     return finished
 
 
+def delete_Note():
+
+    with open("Notes.csv", newline="") as notes_File:
+        reader = csv.DictReader(notes_File, delimiter=",")
+        notes = list(reader)
+
+    titles = []
+    for row in notes:
+        titles.append(row["Title"])
+        
+    selection_phrase = f"Select from the available notes below.\n{titles}\n"
+    valid_title = False
+    while valid_title == False:
+        selection = input(selection_phrase)
+        
+        for title in titles:
+            if selection.lower() == title.lower():
+                valid_title = True
+                selection = title
+                for row in notes:
+                    if row["Title"] == selection:
+                        notes.remove(row)
+
+            if selection == "Cancel":
+                return
+            
+            if selection not in title:
+                selection_phrase = "Note youve selected doesnt share a name with a Note already in the list, please try again or type 'Cancel'\n: "
+            
+    with open("Notes.csv", "w", newline="") as notes_File:
+        writer = csv.DictWriter(notes_File, delimiter=",", fieldnames= ["Title", "Note"])
+        writer.writeheader()
+        for row in notes:
+            writer.writerow(row)
+    
+    return    
+
+
 def update_Note():
 
     with open("Notes.csv", newline="") as notes_File:
         reader = csv.DictReader(notes_File, delimiter=",")
         notes = list(reader)
-    print(notes)
+    
     titles = []
     for row in notes:
         titles.append(row["Title"])
@@ -119,18 +161,20 @@ def update_Note():
                         print(row["Note"])
                         new_note = input("What would you like the new note to be?\n: ")
                         row["Note"] = new_note
-
+            
+            if selection == "Cancel":
+                return
+            
             if selection not in title:
-                selection_phrase = "Note youve selected doesnt share a name with a Note already in the list, please try again"
+                selection_phrase = "Note youve selected doesnt share a name with a Note already in the list, please try again or type 'Cancel'\n: "
 
     with open("Notes.csv", "w", newline="") as notes_File:
         writer = csv.DictWriter(notes_File, delimiter=",", fieldnames= ["Title", "Note"])
         writer.writeheader()
         for row in notes:
             writer.writerow(row)
-    
-
 
     return
+
 
 main()
