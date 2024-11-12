@@ -44,15 +44,34 @@ def get_Action():
 
 
 def add_Note():
-    title = input("What is the title of the note you'd like to add?\n: ")
+    with open("Notes.csv", newline="") as notes_File:
+        reader = csv.DictReader(notes_File, delimiter=",")
+        ## Opens Notes database file and creates a copy
+        notes = list(reader)
+
+    ## Iterating through this copy, it grabs all the titles of the notes and adds them to a list to check for duplicate titles
+    titles = []
+    for row in notes:
+        titles.append(row["Title"])
+
+    selection_phrase = "What is the title of the note you'd like to add?\n: "
+    valid_option = False
+    while valid_option == False:
+        new_title = input(selection_phrase)
+        
+        if new_title in titles:
+            selection_phrase = "That title is already the title of another note, if youd like to change that note, use the update feature, otherwise choose a new title\n: "
+        else:
+            valid_option = True
+
     message = input("What is the note you'd like to write?\n: ")
 
     ## Opens the Notes database file and adds a new row, with the new note
     with open("Notes.csv", "a", newline="") as notes_File:
         writer = csv.writer(notes_File, delimiter=',')
-        writer.writerow([title, message])
+        writer.writerow([new_title, message])
 
-    print(f"{title} : {message}")
+    print(f"{new_title} : {message}")
 
     return
 
