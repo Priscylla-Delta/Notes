@@ -69,8 +69,8 @@ def print_Note():
     failure_Question = "Note youve selected doesnt share a name with a Note already in the list, please try again or type 'Cancel'\n: "
     validated_input = get_valid_input(options, default_Question, failure_Question)
 
-    if validated_input == "Cancel":
-            return
+    if validated_input.lower == "cancel":
+        return
 
     for row in notes:
         if row["Title"].lower() == validated_input.lower():
@@ -92,7 +92,7 @@ def delete_Note():
     failure_Question = "Note youve selected doesnt share a name with a Note already in the list, please try again or type 'Cancel'\n: "
     validated_input = get_valid_input(options, default_Question, failure_Question)
 
-    if validated_input == "Cancel":
+    if validated_input.lower == "cancel":
         return
 
     for row in notes:
@@ -125,7 +125,7 @@ def update_Note():
     failure_Question = "Note youve selected doesnt share a name with a Note already in the list, please try again or type 'Cancel'\n: "
     validated_input = get_valid_input(options, default_Question, failure_Question)   
 
-    if validated_input == "Cancel":
+    if validated_input.lower == "cancel":
         return
 
     for row in notes:
